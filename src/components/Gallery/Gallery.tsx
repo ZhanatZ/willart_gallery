@@ -11,7 +11,7 @@ interface GalleryProps {
 export function Gallery({ room, images, onImageClick }: GalleryProps) {
   if (images.length === 0) {
     return (
-      <section className={styles.section}>
+      <section id={room.id} className={styles.section}>
         <div className={styles.container}>
           <h2 className={styles.title}>{room.title}</h2>
           <p className={styles.empty}>Изображения скоро появятся</p>
@@ -21,13 +21,11 @@ export function Gallery({ room, images, onImageClick }: GalleryProps) {
   }
 
   return (
-    <section className={styles.section}>
+    <section id={room.id} className={styles.section}>
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.title}>{room.title}</h2>
-          <span className={styles.meta}>
-            {images.length} {pluralize(images.length)}
-          </span>
+          <span className={styles.meta}>{images.length} фото</span>
         </div>
         <div className={styles.grid}>
           {images.map((image, index) => (
@@ -76,12 +74,4 @@ function GalleryCell({ image, index, roomTitle, onClick }: GalleryCellProps) {
       />
     </button>
   );
-}
-
-function pluralize(n: number): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return 'фото';
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'фото';
-  return 'фото';
 }

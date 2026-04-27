@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
 import type { GalleryImage } from '../../types';
 import styles from './Lightbox.module.css';
@@ -13,14 +14,16 @@ interface LightboxWrapperProps {
 export function LightboxWrapper({ images, index, onClose }: LightboxWrapperProps) {
   const [currentIndex, setCurrentIndex] = useState(index);
 
+  const slides = useMemo(
+    () => images.map((img) => ({ src: img.src })),
+    [images],
+  );
+
   const handleView = useCallback(({ index: i }: { index: number }) => {
     setCurrentIndex(i);
   }, []);
 
   if (index < 0) return null;
-
-  const slides = images.map((img) => ({ src: img.src }));
-  const total = images.length;
 
   return (
     <Lightbox
@@ -28,10 +31,18 @@ export function LightboxWrapper({ images, index, onClose }: LightboxWrapperProps
       close={onClose}
       index={index}
       slides={slides}
+      plugins={[Zoom]}
       on={{ view: handleView }}
-      animation={{ fade: 200, swipe: 200 }}
+      animation={{ fade: 200, swipe: 200, zoom: 300 }}
       carousel={{ imageFit: 'contain', preload: 2 }}
       controller={{ closeOnBackdropClick: true, closeOnPullDown: true }}
+      zoom={{
+        maxZoomPixelRatio: 3,
+        zoomInMultiplier: 2,
+        doubleClickMaxStops: 2,
+        scrollToZoom: true,
+      }}
+      toolbar={{ buttons: ['close'] }}
       labels={{
         Previous: 'Назад',
         Next: 'Вперёд',
@@ -50,7 +61,7 @@ export function LightboxWrapper({ images, index, onClose }: LightboxWrapperProps
           <div className={styles.counter}>
             <span className={styles.current}>{currentIndex + 1}</span>
             <span className={styles.separator}> из </span>
-            <span className={styles.total}>{total}</span>
+            <span className={styles.total}>{slides.length}</span>
           </div>
         ),
       }}

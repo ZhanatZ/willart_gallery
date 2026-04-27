@@ -15,11 +15,16 @@ function buildImages(room: RoomConfig): GalleryImage[] {
 
     return {
       src: full,
-      thumb: thumb,
+      thumb,
       thumbFallback: full,
       alt: `${room.title} — ${filename}`,
     };
   });
+}
+
+export interface RoomWithImages {
+  room: RoomConfig;
+  images: GalleryImage[];
 }
 
 export function useGallery() {
@@ -30,37 +35,35 @@ export function useGallery() {
     cover: assetUrl(galleryConfig.project.cover),
   }), []);
 
-  const [activeRoomId, setActiveRoomId] = useState(rooms[0]?.id ?? '');
-  const [lightboxIndex, setLightboxIndex] = useState(-1);
-
-  const activeRoom = useMemo(
-    () => rooms.find((r) => r.id === activeRoomId) ?? rooms[0],
-    [rooms, activeRoomId],
+  const roomsWithImages = useMemo<RoomWithImages[]>(
+    () => rooms.map((room) => ({ room, images: buildImages(room) })),
+    [rooms],
   );
 
-  const images = useMemo(() => buildImages(activeRoom), [activeRoom]);
+  const [lightbox, setLightbox] = useState<{
+    roomId: string;
+    index: number;
+  } | null>(null);
 
-  const openLightbox = useCallback((index: number) => {
-    setLightboxIndex(index);
+  const lightboxImages = useMemo(() => {
+    if (!lightbox) return [];
+    return roomsWithImages.find((r) => r.room.id === lightbox.roomId)?.images ?? [];
+  }, [lightbox, roomsWithImages]);
+
+  const openLightbox = useCallback((roomId: string, index: number) => {
+    setLightbox({ roomId, index });
   }, []);
 
   const closeLightbox = useCallback(() => {
-    setLightboxIndex(-1);
-  }, []);
-
-  const selectRoom = useCallback((id: string) => {
-    setActiveRoomId(id);
-    setLightboxIndex(-1);
+    setLightbox(null);
   }, []);
 
   return {
     project,
     rooms,
-    activeRoomId,
-    selectRoom,
-    activeRoom,
-    images,
-    lightboxIndex,
+    roomsWithImages,
+    lightboxImages,
+    lightboxIndex: lightbox?.index ?? -1,
     openLightbox,
     closeLightbox,
   };
