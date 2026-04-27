@@ -1,0 +1,118 @@
+.section {
+  padding: var(--spacing-xl) 0 var(--spacing-3xl);
+}
+
+.container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--content-padding);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.cell {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  background-color: var(--color-bg-warm);
+  border: none;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color var(--transition-fast);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.cell:active::after {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-base);
+}
+
+@media (hover: hover) {
+  .cell:hover::after {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .cell:hover .thumb {
+    transform: scale(1.03);
+  }
+}
+
+.empty {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  text-align: center;
+  padding: var(--spacing-4xl) 0;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  .section {
+    padding-top: var(--spacing-xl);
+  }
+}
+
+@media (min-width: 768px) {
+  .grid {
+    gap: 10px;
+  }
+
+  .cell {
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .section {
+    padding: var(--spacing-2xl) 0 var(--spacing-4xl);
+  }
+}
